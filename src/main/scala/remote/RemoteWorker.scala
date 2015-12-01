@@ -7,7 +7,8 @@ import org.apache.commons.codec.digest.Crypt
 
 object RemoteWorker extends App {
   val system = ActorSystem("Workers")
-  val masterSubscriber = "akka.tcp://AkkaLoader@smaster:5500/user/Subscriber"
+  val masterHost = "smaster"
+  val masterSubscriber = s"akka.tcp://AkkaLoader@$masterHost:5500/user/Subscriber"
   val keepAliveDelay = 2000 //ms
 
   val remoteActor = system.actorOf(Props[RemoteWorker], name = "RemoteWorker")

@@ -1,6 +1,7 @@
 package remote
 
-import java.net.InetAddress
+import java.net.{NetworkInterface, InetAddress}
+import java.util
 
 import akka.actor._
 import org.apache.commons.codec.digest.Crypt
@@ -20,13 +21,19 @@ object RemoteWorker extends App {
 
   def subscribeToMaster() = {
     val masterActor = system.actorSelection(masterSubscriber)
-    val host = InetAddress.getLocalHost.getHostAddress
 
-    println("Registered Remote Worker host = " + host)
+    val interface = NetworkInterface.getByName("eth0")
 
-    masterActor ! host
+    val hostIp = interface
+      .getInterfaceAddresses
+      .get(1) // ipV4
+      .getAddress
+      .toString
+      .substring(1) // no trailing slash
+
+    println("Registered Remote Worker host = " + hostIp)
+    masterActor ! hostIp
   }
-
 }
 
 class RemoteWorker extends Actor {
